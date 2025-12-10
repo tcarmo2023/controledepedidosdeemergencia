@@ -5158,7 +5158,7 @@
             const unameRaw = (currentUser && (currentUser.username || currentUser.user || currentUser.name) || '');
             const uname = unameRaw.trim().toLowerCase();
             const emailLocal = ((currentUser && currentUser.email) || '').split('@')[0].trim().toLowerCase();
-            const isAdminUser = currentUser && (currentUser.is_admin === true || (currentUser.role || '').toLowerCase() === 'admin' || uname === 'thiago.carmo' || emailLocal === 'thiago.carmo');
+            const isAdminUser = currentUser && (currentUser.is_admin === true || (currentUser.role || '').toLowerCase() === 'admin' || uname === 'thiago.carmo' || emailLocal === 'thiago.carmo' || uname === 'thiago.carmo@normaq.com.br');
             // fallback: se não houver permissões salvas, libera todas as abas exceto admin
             const isEmptyPerms = !p || (typeof p === 'object' && Object.keys(p).length === 0);
             const defaultPerms = { orders: true, consultant: true, arrival: true, new_order: true, delete_order: true, request_delete: true, admin: false };
@@ -5174,6 +5174,10 @@
                 const allowed = isAdminTab ? isAdminUser : (isAdminUser || always || byPerm || carlosOverride);
                 el.style.display = allowed ? '' : 'none';
             });
+            if (uname === 'thiago.carmo' || emailLocal === 'thiago.carmo' || uname === 'thiago.carmo@normaq.com.br') {
+                const adminItem = document.querySelector('.menu-item[data-tab="admin-tab"]');
+                if (adminItem) adminItem.style.display = '';
+            }
             refreshDeleteNotificationsIfCarlos();
         }
     </script>
