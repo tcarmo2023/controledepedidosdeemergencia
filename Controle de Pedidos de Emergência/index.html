@@ -4035,17 +4035,7 @@
                     } catch {}
                 }
                 if (!req.length) {
-                    try {
-                        const local = (getLocalNotifs(currentUser.id) || []).filter(x => (x.status||'pending') === 'pending');
-                        const kept = [];
-                        for (const r of local) {
-                            const num = normalizeOrderNum(r.numero_pedido||'');
-                            const pn  = normalizePartNumber(r.part_number||'');
-                            const pairExists = (await existsOrderPair(num, pn)) || (await existsOrderPairExact(num, pn));
-                            if (pairExists) kept.push({ ...r, numero_pedido: num, part_number: pn });
-                        }
-                        req = kept;
-                    } catch { req = []; }
+                    try { setLocalNotifs(currentUser.id, []); } catch {}
                 }
                 const toast = document.getElementById('requesterPendingToast');
                 const msg = document.getElementById('requesterPendingToastMsg');
@@ -4099,20 +4089,7 @@
                         req = kept;
                     } catch {}
                 }
-                if (!req.length) {
-                    try {
-                        const local = (getLocalNotifs(currentUser.id) || []).filter(x => (x.status||'pending') === 'pending');
-                        const kept = [];
-                        for (const r of local) {
-                            const num = normalizeOrderNum(r.numero_pedido||'');
-                            const pn  = normalizePartNumber(r.part_number||'');
-                            const pairExists = (await existsOrderPair(num, pn)) || (await existsOrderPairExact(num, pn));
-                            if (pairExists) kept.push({ ...r, numero_pedido: num, part_number: pn });
-                        }
-                        req = kept;
-                    } catch { req = []; }
-                }
-                if (!req.length) { el.style.display='none'; el.classList.remove('bell-blink'); return; }
+                if (!req.length) { try { setLocalNotifs(currentUser.id, []); } catch {} el.style.display='none'; el.classList.remove('bell-blink'); return; }
                 const nums = req.map(x => `${x.numero_pedido}${(x.part_number||'') ? ' ('+x.part_number+')' : ''}`).filter(Boolean).join(', ');
                 el.innerHTML = `<i class="fas fa-bell"></i> ${req.length}`;
                 el.title = `Minhas solicitações pendentes: ${nums}`;
