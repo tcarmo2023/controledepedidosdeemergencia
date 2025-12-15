@@ -3674,7 +3674,7 @@
                 let data = [];
                 if (supabase && supabase.from) {
                     let query = supabase.from('controle_pedidos').select('*');
-                    if (revenda) query = query.eq('revenda', revenda);
+                    if (revenda) query = query.ilike('revenda', revenda);
                     const res = await query;
                     if (!res.error) data = res.data || [];
                 }
@@ -3690,7 +3690,7 @@
                     status: document.getElementById('reqdel-status-filter')?.value || ''
                 };
                 const matchText = (a, b) => (a||'').toString().toLowerCase().includes((b||'').toString().toLowerCase());
-                const matchEq = (a, b) => !b || (a||'') === b;
+                const matchEq = (a, b) => !b || ((''+(a||'')).trim().toLowerCase() === ((''+b).trim().toLowerCase()));
                 const matchDateEq = (a, b) => !b || (normalizeDateToISO?.(a) || a || '') === b;
                 const matchYearMonth = (a, year, month) => {
                     const iso = normalizeDateToISO?.(a) || a || '';
@@ -4285,7 +4285,7 @@
                 const percEmergencia = baseLines === 0 ? 0 : Math.round((emg / baseLines) * 100);
                 document.getElementById('dash-percent-emergencia').textContent = percEmergencia + '%';
                 const filterSet = (arr, f) => arr.filter(order => {
-                    const okRev = (!f.revenda || (order.revenda||'') === f.revenda);
+                    const okRev = (!f.revenda || ((''+(order.revenda||''))).trim().toLowerCase() === ((''+f.revenda).trim().toLowerCase()));
                     const iso = normalizeDateToISO?.(order.data_pedido) || order.data_pedido || '';
                     let okYM = true;
                     if (f.year || f.month) {
@@ -4295,8 +4295,8 @@
                         }
                     }
                     const okCli = !(f.cliente) || (order.cliente||'').toString().toLowerCase().includes((f.cliente||'').toString().toLowerCase());
-                    const okShip = !(f.transportadora) || (order.transportadora||'') === f.transportadora;
-                    const okStatus = !(f.status) || (order.status||'') === f.status;
+                    const okShip = !(f.transportadora) || ((''+(order.transportadora||''))).trim().toLowerCase() === ((''+f.transportadora).trim().toLowerCase());
+                    const okStatus = !(f.status) || ((''+(order.status||''))).trim().toLowerCase() === ((''+f.status).trim().toLowerCase());
                     return okRev && okYM && okCli && okShip && okStatus;
                 });
                 const detectActiveYear = (arr) => {
@@ -4730,8 +4730,10 @@
         async function clearDeleteRequestNotifications(items) {
             try {
                 const arr = (items||[]);
-                const keys = arr.map(n => typeof n === 'object' ? buildNotifKey(n.numero_pedido||'', n.part_number||'') : buildNotifKey(n||'', '')).filter(Boolean);
-                if (keys.length === 0) return;
+                const keysFull = arr.map(n => typeof n === 'object' ? buildNotifKey(n.numero_pedido||'', n.part_number||'') : buildNotifKey(n||'', '')).filter(Boolean);
+                const keysBare = arr.map(n => typeof n === 'object' ? buildNotifKey(n.numero_pedido||'', '') : buildNotifKey(n||'', '')).filter(Boolean);
+                const keysSet = new Set([...(keysFull||[]), ...(keysBare||[])]);
+                if (keysSet.size === 0) return;
                 // atualizar perfil do carlos
                 let carlos = null;
                 try { const { data } = await supabase.from('profiles').select('*').eq('username','carlos.vinicius').single(); carlos = data; } catch {}
@@ -4739,12 +4741,12 @@
                     let pJson = carlos.permissions ?? carlos.permissoes ?? {};
                     if (typeof pJson === 'string') { try { pJson = JSON.parse(pJson); } catch { pJson = {}; } }
                     const existing = Array.isArray(pJson.delete_requests) ? pJson.delete_requests : [];
-                    const filtered = existing.filter(o => !keys.includes(buildNotifKey(o.numero_pedido||'', o.part_number||'')));
+                    const filtered = existing.filter(o => !(keysSet.has(buildNotifKey(o.numero_pedido||'', o.part_number||'')) || keysSet.has(buildNotifKey(o.numero_pedido||'', ''))));
                     const next = { ...(pJson||{}), delete_requests: filtered };
                     try { await saveProfilePerms(carlos.id, next); } catch {}
                     try { setLocalPerm(carlos.id, next); } catch {}
                     const local = getLocalNotifs(carlos.id);
-                    const localFiltered = local.filter(o => !keys.includes(buildNotifKey(o.numero_pedido||'', o.part_number||'')));
+                    const localFiltered = local.filter(o => !(keysSet.has(buildNotifKey(o.numero_pedido||'', o.part_number||'')) || keysSet.has(buildNotifKey(o.numero_pedido||'', ''))));
                     setLocalNotifs(carlos.id, localFiltered);
                 }
                 // atualizar perfil do thiago
@@ -4754,12 +4756,12 @@
                     let pJsonT = thiago.permissions ?? thiago.permissoes ?? {};
                     if (typeof pJsonT === 'string') { try { pJsonT = JSON.parse(pJsonT); } catch { pJsonT = {}; } }
                     const existingT = Array.isArray(pJsonT.delete_requests) ? pJsonT.delete_requests : [];
-                    const filteredT = existingT.filter(o => !keys.includes(buildNotifKey(o.numero_pedido||'', o.part_number||'')));
+                    const filteredT = existingT.filter(o => !(keysSet.has(buildNotifKey(o.numero_pedido||'', o.part_number||'')) || keysSet.has(buildNotifKey(o.numero_pedido||'', ''))));
                     const nextT = { ...(pJsonT||{}), delete_requests: filteredT };
                     try { await saveProfilePerms(thiago.id, nextT); } catch {}
                     try { setLocalPerm(thiago.id, nextT); } catch {}
                     const localT = getLocalNotifs(thiago.id);
-                    const localFilteredT = localT.filter(o => !keys.includes(buildNotifKey(o.numero_pedido||'', o.part_number||'')));
+                    const localFilteredT = localT.filter(o => !(keysSet.has(buildNotifKey(o.numero_pedido||'', o.part_number||'')) || keysSet.has(buildNotifKey(o.numero_pedido||'', ''))));
                     setLocalNotifs(thiago.id, localFilteredT);
                 }
             } catch {}
@@ -4876,13 +4878,20 @@
                         if (typeof pRaw === 'string') { try { p = JSON.parse(pRaw); } catch { p = {}; } }
                         const isAdmin = (user.is_admin === true) || ((user.role || '').toLowerCase() === 'admin') || (uname.toLowerCase() === 'thiago.carmo');
                         const permsText = Object.keys(p||{}).filter(k => p[k]).join(', ');
+                        let notifCount = 0;
+                        try {
+                            const localNotifs = getLocalNotifs(user.id) || [];
+                            notifCount = localNotifs.filter(o => (o.status||'pending') === 'pending').length;
+                        } catch {}
                         tr.innerHTML = `
                             <td>${uname}</td>
                             <td>${permsText || '-'}</td>
                             <td>${isAdmin ? 'Sim' : 'Não'}</td>
+                            <td>${notifCount}</td>
                             <td>
                                 <button class="btn btn-info" data-revoke="${user.id}" style="padding:5px 10px; font-size:14px; margin-right:8px;">Revogar Permissões</button>
                                 <button class="btn btn-danger" data-del="${user.id}" style="padding:5px 10px; font-size:14px;">Excluir Usuário</button>
+                                <button class="btn btn-warning" data-clear-notifs="${user.id}" style="padding:5px 10px; font-size:14px; margin-left:8px;">Limpar Notificações</button>
                             </td>`;
                         tbody.appendChild(tr);
                     });
@@ -4901,6 +4910,14 @@
                             const uid = e.currentTarget.getAttribute('data-revoke');
                             if (confirm('Revogar todas as permissões deste usuário?')) {
                                 await revokePermissions(uid);
+                            }
+                        });
+                    });
+                    tbody.querySelectorAll('button[data-clear-notifs]').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const uid = e.currentTarget.getAttribute('data-clear-notifs');
+                            if (confirm('Limpar todas as notificações pendentes deste usuário?')) {
+                                await clearUserNotifications(uid);
                             }
                         });
                     });
@@ -4965,6 +4982,23 @@
             } catch (err) {
                 console.error('Erro ao revogar permissões:', err);
                 alert('Erro ao revogar permissões.');
+            }
+        }
+
+        async function clearUserNotifications(userId) {
+            try {
+                const { data: row } = await supabase.from('profiles').select('*').eq('id', userId).single();
+                let p = row?.permissions ?? row?.permissoes ?? {};
+                if (typeof p === 'string') { try { p = JSON.parse(p); } catch { p = {}; } }
+                const next = { ...(p||{}), delete_requests: [], delete_requested: [] };
+                try { await saveProfilePerms(userId, next); } catch {}
+                try { setLocalPerm(userId, next); } catch {}
+                try { setLocalNotifs(userId, []); } catch {}
+                alert('Notificações limpas para o usuário.');
+                loadUsersForAdmin();
+            } catch (e) {
+                console.error('Erro ao limpar notificações do usuário:', e);
+                alert('Erro ao limpar notificações.');
             }
         }
         
