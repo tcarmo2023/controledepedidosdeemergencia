@@ -813,7 +813,7 @@
             <div class="content-area">
                 <!-- Dashboard Tab -->
                 <div class="tab-content active" id="dashboard-tab">
-                    <h2 class="section-title">Dashboard</h2>
+                    <h2 class="section-title">Dashboard <span style="float:right; font-size:14px; font-weight:400;">Conversão: <input id="dash-conversion-rate" type="text" value="1,4161" placeholder="1,4161" style="width:110px; padding:4px 6px; border:1px solid #ddd; border-radius:4px; text-align:right;" /></span></h2>
                     <div class="filters dash-filters">
                         <div class="filter-row">
                             <div class="filter-group">
@@ -843,6 +843,73 @@
                                 </select>
                             </div>
                             <div class="filter-group">
+                                <label for="dash-week-filter">Semana</label>
+                                <select id="dash-week-filter" class="filter-select" multiple style="display:none;">
+                                    <option value="">Todas</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                    <option value="24">24</option>
+                                    <option value="25">25</option>
+                                    <option value="26">26</option>
+                                    <option value="27">27</option>
+                                    <option value="28">28</option>
+                                    <option value="29">29</option>
+                                    <option value="30">30</option>
+                                    <option value="31">31</option>
+                                    <option value="32">32</option>
+                                    <option value="33">33</option>
+                                    <option value="34">34</option>
+                                    <option value="35">35</option>
+                                    <option value="36">36</option>
+                                    <option value="37">37</option>
+                                    <option value="38">38</option>
+                                    <option value="39">39</option>
+                                    <option value="40">40</option>
+                                    <option value="41">41</option>
+                                    <option value="42">42</option>
+                                    <option value="43">43</option>
+                                    <option value="44">44</option>
+                                    <option value="45">45</option>
+                                    <option value="46">46</option>
+                                    <option value="47">47</option>
+                                    <option value="48">48</option>
+                                    <option value="49">49</option>
+                                    <option value="50">50</option>
+                                    <option value="51">51</option>
+                                    <option value="52">52</option>
+                                    <option value="53">53</option>
+                                </select>
+                                <div id="dash-week-filter-ms" class="multi-select" data-target="dash-week-filter"></div>
+                            </div>
+                            <div class="filter-group">
+                                <label for="dash-date-filter">Data Pedido</label>
+                                <select id="dash-date-filter" class="filter-select" multiple style="display:none;">
+                                    <option value="">Todas</option>
+                                </select>
+                                <div id="dash-date-filter-ms" class="multi-select" data-target="dash-date-filter"></div>
+                            </div>
+                            <div class="filter-group">
                                 <label for="dash-revenda-filter">Revenda</label>
                                 <select id="dash-revenda-filter" class="filter-select">
                                     <option value="">Todas</option>
@@ -859,6 +926,14 @@
                                     <option value="">Todos</option>
                                     <option value="Estoque">Estoque</option>
                                     <option value="Emergência">Emergência</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="dash-order-status-filter">Status Pedido</label>
+                                <select id="dash-order-status-filter" class="filter-select">
+                                    <option value="">Todos</option>
+                                    <option value="Pendente">Pendente</option>
+                                    <option value="Atendido">Atendido</option>
                                 </select>
                             </div>
                             <div class="filter-group">
@@ -887,6 +962,11 @@
                             <div class="dash-card-header"><span class="dash-card-icon valor"><i class="fas fa-money-bill-wave"></i></span><div class="dash-card-title">Valor Total dos Pedidos</div></div>
                             <div class="dash-card-value" id="dash-valor-total">R$ 0,00</div>
                             <div class="dash-card-delta" id="dash-valor-total-delta"></div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="dash-card-header"><span class="dash-card-icon valor"><i class="fas fa-exchange-alt"></i></span><div class="dash-card-title">Conversão de Valor</div></div>
+                            <div class="dash-card-value" id="dash-valor-convertido">R$ 0,00</div>
+                            <div class="dash-card-delta" id="dash-valor-convertido-delta"></div>
                         </div>
                         <div class="dash-card">
                             <div class="dash-card-header"><span class="dash-card-icon custo"><i class="fas fa-coins"></i></span><div class="dash-card-title">Custo UND Total</div></div>
@@ -1042,48 +1122,58 @@
                                     <option value="Emergência">Emergência</option>
                                 </select>
                             </div>
+                            <div class="filter-group">
+                                <label for="order-status-pedido-filter">Status Pedido</label>
+                                <select id="order-status-pedido-filter" class="filter-select">
+                                    <option value="Pendente" selected>Pendente</option>
+                                    <option value="Atendido">Atendido</option>
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
                             <div class="filter-group"></div>
                         </div>
                         
                         <div class="filter-actions">
                             <button class="btn btn-info" id="clear-filters">Limpar Filtros</button>
+                            <button class="btn btn-info" id="orders-fullscreen-btn" style="float:right;">Tela Cheia</button>
                         </div>
                     </div>
                     
-                    <div class="data-table-container">
-                        <div class="table-responsive" style="max-height: 360px; overflow-y: auto;">
+                    <div class="data-table-container" id="orders-table-container">
+                        <div class="table-responsive" id="orders-table-responsive" style="max-height: 360px; overflow-y: auto;">
                             <table class="data-table" id="orders-table">
                                 <thead>
                                     <tr>
-                                        <th>Ações</th>
-                                        <th>Revenda</th>
-                                        <th>Nº Pedido</th>
-                                        <th>Fornecedor</th>
-                                        <th>Data</th>
-                                        <th>Cliente</th>
-                                        <th>CTT/ORC</th>
-                                        <th>Part Number</th>
-                                        <th>Descrição</th>
-                                        <th>Qtde</th>
-                                        <th>Atd</th>
-                                        <th>B.O</th>
-                                        <th>Faturado</th>
-                                        <th>Prev. Fat.</th>
-                                        <th>NF</th>
-                                        <th>Custo UND</th>
-                                        <th>Custo Total</th>
-                                        <th>Transportadora</th>
-                                        <th>Previsão</th>
-                                        <th>Chegada</th>
-                                        <th>Atraso</th>
-                                        <th>Lead Time</th>
-                                        <th>Consultor</th>
-                                        <th>OBS</th>
-                                        <th>TW Inicial</th>
-                                        <th>Prev. Atd.</th>
-                                        <th>TW Nova</th>
-                                        <th>Nova Prev. Atd.</th>
-                                        <th>Status</th>
+                                        <th data-key="actions">Ações</th>
+                                        <th data-key="status_pedido">Status Pedido</th>
+                                        <th data-key="revenda">Revenda</th>
+                                        <th data-key="numero_pedido">Nº Pedido</th>
+                                        <th data-key="fornecedor">Fornecedor</th>
+                                        <th data-key="data_pedido">Data</th>
+                                        <th data-key="cliente">Cliente</th>
+                                        <th data-key="ctt_orc">CTT/ORC</th>
+                                        <th data-key="part_number">Part Number</th>
+                                        <th data-key="descricao">Descrição</th>
+                                        <th data-key="qtde">Qtde</th>
+                                        <th data-key="atd">Atd</th>
+                                        <th data-key="bo">B.O</th>
+                                        <th data-key="faturado">Faturado</th>
+                                        <th data-key="prev_fat">Prev. Fat.</th>
+                                        <th data-key="nf">NF</th>
+                                        <th data-key="custo_und">Custo UND</th>
+                                        <th data-key="custo_total">Custo Total</th>
+                                        <th data-key="transportadora">Transportadora</th>
+                                        <th data-key="previsao">Previsão</th>
+                                        <th data-key="chegada">Chegada</th>
+                                        <th data-key="atraso">Atraso</th>
+                                        <th data-key="lead_time">Lead Time</th>
+                                        <th data-key="consultor">Consultor</th>
+                                        <th data-key="obs">OBS</th>
+                                        <th data-key="tw_inicial">TW Inicial</th>
+                                        <th data-key="prev_atd">Prev. Atd.</th>
+                                        <th data-key="tw_nova">TW Nova</th>
+                                        <th data-key="nova_prev_atd">Nova Prev. Atd.</th>
+                                        <th data-key="status">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1310,11 +1400,12 @@
                         
                         <div class="filter-actions">
                             <button class="btn btn-info" id="consultant-clear-filters">Limpar Filtros</button>
+                            <button class="btn btn-info" id="consultant-fullscreen-btn" style="float:right;">Tela Cheia</button>
                         </div>
                     </div>
                     
-                    <div class="data-table-container">
-                        <div class="table-responsive" style="max-height: 800px; overflow-y: auto;">
+                    <div class="data-table-container" id="consultant-table-container">
+                        <div class="table-responsive" id="consultant-table-responsive" style="max-height: 800px; overflow-y: auto;">
                             <table class="data-table" id="consultant-table">
                                 <thead>
                                     <tr>
@@ -2207,6 +2298,8 @@
             footerWhatsapp.href = whatsappUrl;
             if (loginFooterWhatsapp) loginFooterWhatsapp.href = whatsappUrl;
             
+            // Default: manter Status Pedido como Pendente
+            const spf = document.getElementById('order-status-pedido-filter'); if (spf) spf.value = 'Pendente';
             // Auto-calculation setup for new order form
             setupAutoCalculations();
 
@@ -2236,25 +2329,55 @@
             const isAdmin = (document.getElementById('admin_new_is_admin')?.value === 'true');
             if (!username || !email) { alert('Informe usuário e e-mail'); return; }
             if (!supabase || !supabase.from) { alert('Supabase não configurado'); return; }
-            const { data: signData, error: signErr } = await supabase.auth.signUp({ email, password: 'NMQ@123' });
-            if (signErr) { alert('Erro ao cadastrar: '+(signErr.message||'')); return; }
-            const uid = signData?.user?.id;
-            if (!uid) { alert('Erro ao cadastrar: usuário sem id'); return; }
-            const payload = { id: uid, username, email };
-            const { data: inserted, error } = await supabase.from('profiles').insert([payload]).select('*');
-            if (error) { alert('Erro ao cadastrar: '+ (error.message||'')); return; }
-            const newUser = (inserted && inserted[0]) || { id: uid, username, email };
-            const key = (newUser && (newUser.id || newUser.username || newUser.email)) || username || email;
-            const perms = isAdmin ? { orders: true, new_order: true, delete_order: true, admin: true, request_delete: true } : { orders: true };
-            const permPayload = { ...perms, must_change_password: true };
-            // try update JSON column 'permissions', fallback to 'permissoes' as string
-            let updated = false; let lastErr = null;
-            const tryUpdate = async (obj) => { const { error: e } = await supabase.from('profiles').update(obj).eq('id', newUser?.id); if (!e) updated = true; else lastErr = e; };
-            await tryUpdate({ permissions: permPayload });
-            if (!updated) await tryUpdate({ permissoes: JSON.stringify(permPayload) });
-            if (!updated && key) setLocalPerm(key, permPayload);
-            alert('Usuário cadastrado');
-            loadUsersForAdmin();
+            try {
+                let existing = null;
+                try { const r1 = await supabase.from('profiles').select('*').eq('email', email).maybeSingle(); if (!r1.error) existing = r1.data || null; } catch {}
+                if (!existing) { try { const r2 = await supabase.from('profiles').select('*').eq('username', username).maybeSingle(); if (!r2.error) existing = r2.data || null; } catch {} }
+                let uid = existing?.id || null;
+                let newUser = existing || null;
+                if (!newUser) {
+                    const { data: signData, error: signErr } = await supabase.auth.signUp({ email, password: 'NMQ@123' });
+                    if (signErr && String(signErr.message||'').toLowerCase().includes('already')) {
+                        const payload = { username, email };
+                        const ins = await supabase.from('profiles').upsert(payload).select('*');
+                        if (ins.error) {
+                            const perms = isAdmin ? { orders: true, new_order: true, delete_order: true, admin: true, request_delete: true } : { orders: true };
+                            const permPayload = { ...perms, must_change_password: true };
+                            setLocalPerm(email, permPayload);
+                            alert('Usuário já existente na autenticação. Permissões salvas localmente.');
+                        } else {
+                            newUser = Array.isArray(ins.data) ? ins.data[0] : ins.data;
+                            uid = newUser?.id || null;
+                            alert('Usuário já existia. Perfil atualizado/ criado.');
+                        }
+                    } else if (signErr) {
+                        alert('Erro ao cadastrar: '+(signErr.message||''));
+                        return;
+                    } else {
+                        uid = signData?.user?.id || null;
+                        const payload = uid ? { id: uid, username, email } : { username, email };
+                        const { data: inserted, error } = await supabase.from('profiles').upsert(payload).select('*');
+                        if (error) { alert('Erro ao cadastrar: '+(error.message||'')); return; }
+                        newUser = Array.isArray(inserted) ? inserted[0] : inserted;
+                    }
+                }
+                const key = (newUser && (newUser.id || newUser.username || newUser.email)) || username || email;
+                const perms = isAdmin ? { orders: true, new_order: true, delete_order: true, admin: true, request_delete: true } : { orders: true };
+                const permPayload = { ...perms, must_change_password: true };
+                let updated = false; let lastErr = null;
+                const tryUpdate = async (obj) => {
+                    if (newUser?.id) { const r = await supabase.from('profiles').update(obj).eq('id', newUser.id); if (!r.error) { updated = true; return; } else { lastErr = r.error; } }
+                    const r2 = await supabase.from('profiles').update(obj).eq('email', email);
+                    if (!r2.error) updated = true; else lastErr = r2.error;
+                };
+                await tryUpdate({ permissions: permPayload });
+                if (!updated) await tryUpdate({ permissoes: JSON.stringify(permPayload) });
+                if (!updated && key) setLocalPerm(key, permPayload);
+                alert('Usuário cadastrado/atualizado');
+                loadUsersForAdmin();
+            } catch (e) {
+                alert('Erro ao cadastrar: '+(e.message||''));
+            }
         });
 
         document.getElementById('admin-email-add-btn')?.addEventListener('click', async function(){
@@ -2325,7 +2448,9 @@
                 const { data: authRes, error: authErr } = await supabase.auth.signInWithPassword({ email: loginEmail, password });
                 if (authErr || !authRes?.user) { alert('Usuário ou senha incorretos.'); return; }
                 const uid = authRes.user.id;
-                const { data: data } = await supabase.from('profiles').select('*').eq('id', uid).single();
+                let { data } = await supabase.from('profiles').select('*').eq('id', uid).single();
+                if (!data) { const r = await supabase.from('profiles').select('*').eq('email', loginEmail).maybeSingle(); if (!r.error) data = r.data || data; }
+                if (!data) { data = { id: uid, username: profileRow?.username || username, email: loginEmail }; }
                 let pJson = data?.permissions ?? data?.permissoes ?? null; if (typeof pJson === 'string') { try { pJson = JSON.parse(pJson); } catch { pJson = null; } }
                 const userKey = (uid || data?.id || data?.username || loginEmail);
                 const localP = getLocalPerm(userKey);
@@ -2562,6 +2687,11 @@
         
         // Helpers
         const toStr = (v) => v === '' ? null : v;
+        const canonicalCase = (s) => {
+            const t = (s == null ? '' : (''+s)).trim().toLowerCase().replace(/\s+/g,' ');
+            if (t === '') return '';
+            return t.split(' ').map(w => w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+        };
         const toInt = (v) => {
             if (v === '' || v == null) return null;
             const s = (''+v).replace(/[^0-9-]/g, '');
@@ -3105,33 +3235,33 @@
             for (let r = 1; r < lines.length; r++) {
                 const cols = parseLine(lines[r]);
                 const get = (k) => { const i = map[k]; return i >= 0 ? (cols[i] || '').trim() : ''; };
-                const obj = {
-                    revenda: get('revenda'),
-                    numero_pedido: get('numero_pedido'),
-                    fornecedor: get('fornecedor'),
-                    data_pedido: normalizeDateToISO(get('data_pedido')),
-                    cliente: get('cliente'),
-                    ctt_orc: cleanIntString(get('ctt_orc')),
-                    part_number: get('part_number').replace(/,$/, ''),
-                    descricao: get('descricao'),
-                    qtde: cleanIntString(get('qtde')),
-                    atd: cleanIntString(get('atd')),
-                    faturado: normalizeDateToISO(get('faturado')),
-                    chegada: normalizeDateToISO(get('chegada')),
-                    nf: cleanIntString(get('nf')),
-                    custo_und: cleanFloatString(get('custo_und')),
-                    transportadora: get('transportadora'),
-                    status: get('status'),
-                    previsao: normalizeDateToISO(get('previsao')),
-                    atraso: get('atraso'),
-                    lead_time: get('lead_time'),
-                    consultor: get('consultor'),
-                    obs: get('obs'),
-                    tw_inicial: firstIntChunk(get('tw_inicial')),
-                    prev_atd: normalizeDateToISO(get('prev_atd')),
-                    tw_nova: firstIntChunk(get('tw_nova')),
-                    nova_prev_atd: normalizeDateToISO(get('nova_prev_atd'))
-                };
+            const obj = {
+                revenda: canonicalCase(get('revenda')),
+                numero_pedido: get('numero_pedido'),
+                fornecedor: canonicalCase(get('fornecedor')),
+                data_pedido: normalizeDateToISO(get('data_pedido')),
+                cliente: canonicalCase(get('cliente')),
+                ctt_orc: cleanIntString(get('ctt_orc')),
+                part_number: get('part_number').replace(/,$/, ''),
+                descricao: get('descricao'),
+                qtde: cleanIntString(get('qtde')),
+                atd: cleanIntString(get('atd')),
+                faturado: normalizeDateToISO(get('faturado')),
+                chegada: normalizeDateToISO(get('chegada')),
+                nf: cleanIntString(get('nf')),
+                custo_und: cleanFloatString(get('custo_und')),
+                transportadora: canonicalCase(get('transportadora')),
+                status: canonicalCase(get('status')),
+                previsao: normalizeDateToISO(get('previsao')),
+                atraso: get('atraso'),
+                lead_time: get('lead_time'),
+                consultor: canonicalCase(get('consultor')),
+                obs: get('obs'),
+                tw_inicial: firstIntChunk(get('tw_inicial')),
+                prev_atd: normalizeDateToISO(get('prev_atd')),
+                tw_nova: firstIntChunk(get('tw_nova')),
+                nova_prev_atd: normalizeDateToISO(get('nova_prev_atd'))
+            };
                 const allEmpty = Object.values(obj).every(v => (v==null || v===''));
                 if (!allEmpty) rows.push(obj);
             }
@@ -3187,9 +3317,7 @@
                 const revenda = document.getElementById('revenda-filter')?.value || '';
                 let data = [];
                 if (supabase && supabase.from) {
-                    let query = supabase.from('controle_pedidos').select('*');
-                    if (revenda) query = query.eq('revenda', revenda);
-                    const res = await query;
+                    const res = await supabase.from('controle_pedidos').select('*');
                     if (res.error) { console.error('Erro ao carregar pedidos:', res.error); }
                     else { data = res.data || []; }
                 }
@@ -3212,11 +3340,12 @@
                     fornecedor: document.getElementById('supplier-filter')?.value || '',
                     transportadora: document.getElementById('shipping-filter')?.value || '',
                     revenda: revenda,
-                    status: document.getElementById('status-filter')?.value || ''
+                    status: document.getElementById('status-filter')?.value || '',
+                    pedido_status: document.getElementById('order-status-pedido-filter')?.value || 'Pendente'
                 };
 
                 const matchText = (a, b) => (a||'').toString().toLowerCase().includes((b||'').toString().toLowerCase());
-                const matchEq = (a, b) => !b || (a||'') === b;
+                const matchEq = (a, b) => !b || ((''+(a||'')).trim().toLowerCase() === ((''+b).trim().toLowerCase()));
                 const matchDateEq = (a, b) => !b || (normalizeDateToISO?.(a) || a || '') === b;
                 const cleanDigits = (s) => (s??'').toString().replace(/\D+/g,'');
                 const matchTW = (a, b) => { const A = cleanDigits(a), B = cleanDigits(b); if (!B) return true; return A === B || A.includes(B); };
@@ -3242,8 +3371,39 @@
                     const okFor = matchText(order.fornecedor, filters.fornecedor);
                     const okShip = matchEq(order.transportadora, filters.transportadora);
                     const okStatus = matchEq(order.status, filters.status);
-                    return okRev && okYM && okNum && okPn && okNf && okDate && okTW && okCons && okCli && okFor && okShip && okStatus;
+                    const hasChegada = !!(normalizeDateToISO?.(order.chegada) || order.chegada);
+                    const curPedidoStatus = hasChegada ? 'Atendido' : 'Pendente';
+                    const okPedidoStatus = !filters.pedido_status || ((''+filters.pedido_status).trim().toLowerCase() === curPedidoStatus.toLowerCase());
+                    return okRev && okYM && okNum && okPn && okNf && okDate && okTW && okCons && okCli && okFor && okShip && okStatus && okPedidoStatus;
                 });
+
+                const toFloatSafe = (v) => toFloat ? (toFloat(v)||0) : (parseFloat(String(v).replace(/\./g,'').replace(/,/,'.'))||0);
+                const toIntSafe = (v) => toInt ? (toInt(v)||0) : (parseInt(String(v).replace(/[^0-9-]/g,''),10)||0);
+                const sortVal = (o, key) => {
+                    if (key === 'status_pedido') { const has = !!(normalizeDateToISO?.(o.chegada) || o.chegada); return has ? 'Atendido' : 'Pendente'; }
+                    if (key === 'bo') { const v = computeBO(o); return v == null ? null : Number(v); }
+                    if (key === 'prev_fat') { const v = computePrevFat(o); return v == null ? null : Number(v); }
+                    if (['custo_total','custo_und'].includes(key)) return toFloatSafe(o[key]);
+                    if (['qtde','atd','lead_time','tw_inicial','tw_nova','atraso','nf'].includes(key)) return toIntSafe(o[key]);
+                    if (['data_pedido','faturado','previsao','chegada','prev_atd','nova_prev_atd'].includes(key)) { const d = normalizeDateToISO?.(o[key]) || o[key] || ''; return d ? new Date(d) : null; }
+                    const v = (o[key] || '').toString().trim().toLowerCase(); return v;
+                };
+                const sort = (window.ordersSort || null);
+                if (sort && sort.key && sort.key !== 'actions') {
+                    filtered.sort((a,b) => {
+                        const va = sortVal(a, sort.key);
+                        const vb = sortVal(b, sort.key);
+                        const cmp = (() => {
+                            if (va == null && vb == null) return 0;
+                            if (va == null) return 1;
+                            if (vb == null) return -1;
+                            if (va instanceof Date && vb instanceof Date) return va.getTime() - vb.getTime();
+                            if (typeof va === 'number' && typeof vb === 'number') return va - vb;
+                            return String(va).localeCompare(String(vb), 'pt-BR', { numeric: true, sensitivity: 'base' });
+                        })();
+                        return sort.dir === 'asc' ? cmp : -cmp;
+                    });
+                }
 
                 filtered.forEach(order => {
                     const row = ordersTable.insertRow();
@@ -3260,7 +3420,7 @@
 
                     // Add remaining data columns
                     const columns = [
-                        'revenda', 'numero_pedido', 'fornecedor', 'data_pedido', 'cliente',
+                        'status_pedido', 'revenda', 'numero_pedido', 'fornecedor', 'data_pedido', 'cliente',
                         'ctt_orc', 'part_number', 'descricao', 'qtde', 'atd', 'bo',
                         'faturado', 'prev_fat', 'nf', 'custo_und', 'custo_total',
                         'transportadora', 'previsao', 'chegada', 'atraso', 'lead_time',
@@ -3269,7 +3429,12 @@
 
                     columns.forEach(column => {
                         const cell = row.insertCell();
-                        if (column === 'bo') {
+                        if (column === 'status_pedido') {
+                            const has = !!(normalizeDateToISO?.(order.chegada) || order.chegada);
+                            const txt = has ? 'Atendido' : 'Pendente';
+                            const cls = has ? 'sign-positive' : 'sign-negative';
+                            const span = document.createElement('span'); span.className = cls; span.textContent = txt; cell.appendChild(span);
+                        } else if (column === 'bo') {
                             const val = computeBO(order);
                             const neg = (val != null && Number(val) < 0);
                             const icon = neg ? '❌' : '✅';
@@ -3303,9 +3468,7 @@
                 const revenda = document.getElementById('consultant-revenda-filter')?.value || '';
                 let data = [];
                 if (supabase && supabase.from) {
-                    let query = supabase.from('controle_pedidos').select('*');
-                    if (revenda) query = query.eq('revenda', revenda);
-                    const res = await query;
+                    const res = await supabase.from('controle_pedidos').select('*');
                     if (res.error) { console.error('Erro ao carregar dados do consultor:', res.error); }
                     else { data = res.data || []; }
                 }
@@ -3331,7 +3494,7 @@
                 };
 
                 const matchText = (a, b) => (a||'').toString().toLowerCase().includes((b||'').toString().toLowerCase());
-                const matchEq = (a, b) => !b || (a||'') === b;
+                const matchEq = (a, b) => !b || ((''+(a||'')).trim().toLowerCase() === ((''+b).trim().toLowerCase()));
                 const matchDateEq = (a, b) => !b || (normalizeDateToISO?.(a) || a || '') === b;
                 const cleanDigits = (s) => (s??'').toString().replace(/\D+/g,'');
                 const matchTW = (a, b) => { const A = cleanDigits(a), B = cleanDigits(b); if (!B) return true; return A === B || A.includes(B); };
@@ -3406,9 +3569,7 @@
                 const revenda = document.getElementById('delete-revenda-filter')?.value || '';
                 let data = [];
                 if (supabase && supabase.from) {
-                    let query = supabase.from('controle_pedidos').select('*');
-                    if (revenda) query = query.eq('revenda', revenda);
-                    const res = await query;
+                    const res = await supabase.from('controle_pedidos').select('*');
                     if (res.error) { console.error('Erro ao carregar pedidos para exclusão:', res.error); }
                     else { data = res.data || []; }
                 }
@@ -3430,7 +3591,7 @@
                 };
 
                 const matchText = (a, b) => (a||'').toString().toLowerCase().includes((b||'').toString().toLowerCase());
-                const matchEq = (a, b) => !b || (a||'') === b;
+                const matchEq = (a, b) => !b || ((''+(a||'')).trim().toLowerCase() === ((''+b).trim().toLowerCase()));
                 const matchDateEq = (a, b) => !b || (normalizeDateToISO?.(a) || a || '') === b;
                 const matchYearMonth = (a, year, month) => {
                     const iso = normalizeDateToISO?.(a) || a || '';
@@ -4012,22 +4173,45 @@
                 const revenda = document.getElementById('dash-revenda-filter')?.value || '';
                 let data = [];
                 if (supabase && supabase.from) {
-                    let query = supabase.from('controle_pedidos').select('*');
-                    if (revenda) query = query.eq('revenda', revenda);
-                    const res = await query;
+                    const res = await supabase.from('controle_pedidos').select('*');
                     if (res.error) { } else { data = res.data || []; }
                 }
                 const merged = [...(data || []), ...getLocalOrders()];
+                const getSel = (id) => {
+                    const el = document.getElementById(id);
+                    if (!el || !el.selectedOptions) return [];
+                    return Array.from(el.selectedOptions).map(o => o.value).filter(v => v !== '');
+                };
                 const filters = {
                     year: document.getElementById('dash-year-filter')?.value || '',
                     month: document.getElementById('dash-month-filter')?.value || '',
+                    weeks: getSel('dash-week-filter'),
+                    dates: getSel('dash-date-filter'),
                     cliente: document.getElementById('dash-client-filter')?.value || '',
                     status: document.getElementById('dash-status-filter')?.value || '',
+                    pedido_status: document.getElementById('dash-order-status-filter')?.value || '',
                     transportadora: document.getElementById('dash-shipping-filter')?.value || '',
                     revenda: revenda
                 };
+                (function(){
+                    const el = document.getElementById('dash-date-filter');
+                    if (!el) return;
+                    const prev = getSel('dash-date-filter');
+                    const allDates = Array.from(new Set(merged.map(o => {
+                        const iso = normalizeDateToISO?.(o.data_pedido) || o.data_pedido || '';
+                        if (!iso) return '';
+                        const d = iso.split('T')[0];
+                        const y = d.split('-')[0];
+                        if (filters.year && String(y) !== String(filters.year)) return '';
+                        return d;
+                    }).filter(Boolean))).sort();
+                    const opts = ['<option value="">Todas</option>', ...allDates.map(d => `<option value="${d}">${formatDateDisplay(d)}</option>`)];
+                    el.innerHTML = opts.join('');
+                    prev.forEach(v => { const op = Array.from(el.options).find(o => o.value === v); if (op) op.selected = true; });
+                    try { if (typeof syncMultiSelectFromSelect === 'function') syncMultiSelectFromSelect('dash-date-filter'); } catch {}
+                })();
                 const matchText = (a, b) => (a||'').toString().toLowerCase().includes((b||'').toString().toLowerCase());
-                const matchEq = (a, b) => !b || (a||'') === b;
+                const matchEq = (a, b) => !b || ((''+(a||'')).trim().toLowerCase() === ((''+b).trim().toLowerCase()));
                 const matchYearMonth = (a, year, month) => {
                     const iso = normalizeDateToISO?.(a) || a || '';
                     if (!iso) return !(year || month);
@@ -4039,10 +4223,33 @@
                 const filtered = merged.filter(order => {
                     const okRev = matchEq(order.revenda, filters.revenda);
                     const okYM = matchYearMonth(order.data_pedido, filters.year, filters.month);
+                    const okWeek = (() => {
+                        if (!filters.weeks || filters.weeks.length === 0) return true;
+                        const iso = normalizeDateToISO?.(order.data_pedido) || order.data_pedido || '';
+                        if (!iso) return false;
+                        const [Y,M,D] = iso.split('T')[0].split('-');
+                        const d = new Date(Date.UTC(Number(Y), Number(M)-1, Number(D)));
+                        const day = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - day);
+                        const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+                        const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+                        const okW = filters.weeks.some(w => Number(week) === Number(w));
+                        const okY = !filters.year || String(Y) === String(filters.year);
+                        return okW && okY;
+                    })();
+                    const okDatePick = (() => {
+                        if (!filters.dates || filters.dates.length === 0) return true;
+                        const iso = normalizeDateToISO?.(order.data_pedido) || order.data_pedido || '';
+                        if (!iso) return false;
+                        const dayStr = iso.split('T')[0];
+                        return filters.dates.some(v => String(v) === String(dayStr));
+                    })();
                     const okCli = matchText(order.cliente, filters.cliente);
                     const okShip = matchEq(order.transportadora, filters.transportadora);
                     const okStatus = matchEq(order.status, filters.status);
-                    return okRev && okYM && okCli && okShip && okStatus;
+                    const hasChegada = !!(normalizeDateToISO?.(order.chegada) || order.chegada);
+                    const curPedidoStatus = hasChegada ? 'Atendido' : 'Pendente';
+                    const okPedidoStatus = !filters.pedido_status || (curPedidoStatus.toLowerCase() === filters.pedido_status.toLowerCase());
+                    return okRev && okYM && okWeek && okDatePick && okCli && okShip && okStatus && okPedidoStatus;
                 });
                 const totalPedidos = filtered.length;
                 document.getElementById('dash-total-pedidos').textContent = totalPedidos.toString();
@@ -4051,6 +4258,18 @@
                 const custoUndTotal = sum(filtered, 'custo_und');
                 const fmtMoney = (n) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n || 0);
                 document.getElementById('dash-valor-total').textContent = fmtMoney(valorTotal);
+                let convRate = 1.4161;
+                try {
+                    const el = document.getElementById('dash-conversion-rate');
+                    const lsRaw = localStorage.getItem('dash:conversion_rate') || '';
+                    const valN = parseFloatLocale(el?.value||'');
+                    const lsN = parseFloatLocale(lsRaw);
+                    const pick = (valN && valN>0 ? valN : (lsN && lsN>0 ? lsN : 1.4161));
+                    convRate = pick;
+                    if (el) { if (!el.value) el.value = lsRaw || '1,4161'; localStorage.setItem('dash:conversion_rate', el.value); }
+                } catch {}
+                const valorConvertido = (convRate>0 ? (valorTotal/convRate) : valorTotal);
+                const vcEl = document.getElementById('dash-valor-convertido'); if (vcEl) vcEl.textContent = fmtMoney(valorConvertido);
                 document.getElementById('dash-custo-und-total').textContent = fmtMoney(custoUndTotal);
                 const withDates = filtered.filter(o => o.previsao && o.chegada);
                 const atendidos = withDates.filter(o => {
@@ -4136,7 +4355,7 @@
                         month: (normalizeDateToISO?.(o.data_pedido) || o.data_pedido || '').split('T')[0].split('-')[1]
                     })));
                 }
-                ['dash-total-pedidos-delta','dash-valor-total-delta','dash-custo-und-total-delta','dash-percent-atendimento-delta','dash-percent-emergencia-delta']
+                ['dash-total-pedidos-delta','dash-valor-total-delta','dash-valor-convertido-delta','dash-custo-und-total-delta','dash-percent-atendimento-delta','dash-percent-emergencia-delta']
                     .forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML=''; });
                 const metrics = (arr) => {
                     const countRows = arr.length;
@@ -4183,6 +4402,8 @@
                 console.log('VALOR TOTAL COMPARISON - Current:', valorTotal, 'Previous month:', prevM?.valorTotal);
                 renderDelta('dash-valor-total-delta', null, null, valorTotal, prevM?.valorTotal, true, 'Mês');
                 renderDelta('dash-valor-total-delta', null, null, valorTotal, prevY?.valorTotal, true, 'Ano');
+                renderDelta('dash-valor-convertido-delta', null, null, valorConvertido, (prevM ? (prevM.valorTotal/convRate) : null), true, 'Mês');
+                renderDelta('dash-valor-convertido-delta', null, null, valorConvertido, (prevY ? (prevY.valorTotal/convRate) : null), true, 'Ano');
                 renderDelta('dash-custo-und-total-delta', null, null, custoUndTotal, prevM?.custoUnd, true, 'Mês');
                 renderDelta('dash-custo-und-total-delta', null, null, custoUndTotal, prevY?.custoUnd, true, 'Ano');
                 const renderPercDelta = (elId, curPerc, prev, curCount, label) => {
@@ -4215,7 +4436,7 @@
                     cur.count += 1;
                     cur.custo_total += toFloat(o.custo_total) || 0;
                     cur.qtde += toInt(o.qtde) || 0;
-                    const r = o.revenda || '';
+                        const r = canonicalCase(o.revenda || '');
                     const c = o.cliente || '';
                     cur.revendas[r] = (cur.revendas[r] || 0) + 1;
                     cur.clientes[c] = (cur.clientes[c] || 0) + 1;
@@ -4251,9 +4472,9 @@
                     return Array.from(m.entries()).map(([label,value]) => ({ label, value, count: (c.get(label)?.size || 0) }));
                 };
                 const only = (arr, fn) => arr.filter(fn);
-                const byRevendaTotal = groupBy(filtered, o=>o.revenda||'', o=>toFloat(o.custo_total)||0).sort((a,b)=>b.value-a.value);
-                const byRevendaEstoque = groupBy(only(filtered, o=> (o.status||'')==='Estoque'), o=>o.revenda||'', o=>toFloat(o.custo_total)||0).sort((a,b)=>b.value-a.value);
-                const byRevendaEmerg = groupBy(only(filtered, o=> (o.status||'')==='Emergência'), o=>o.revenda||'', o=>toFloat(o.custo_total)||0).sort((a,b)=>b.value-a.value);
+                const byRevendaTotal = groupBy(filtered, o=>canonicalCase(o.revenda||''), o=>toFloat(o.custo_total)||0).sort((a,b)=>b.value-a.value);
+                const byRevendaEstoque = groupBy(only(filtered, o=> canonicalCase(o.status||'')==='Estoque'), o=>canonicalCase(o.revenda||''), o=>toFloat(o.custo_total)||0).sort((a,b)=>b.value-a.value);
+                const byRevendaEmerg = groupBy(only(filtered, o=> canonicalCase(o.status||'')==='Emergência'), o=>canonicalCase(o.revenda||''), o=>toFloat(o.custo_total)||0).sort((a,b)=>b.value-a.value);
                 const renderBars = (id, data) => {
                     const el = document.getElementById(id); if (!el) return; el.innerHTML = '';
                     const max = Math.max(1, ...data.map(d=>d.value||0));
@@ -4277,9 +4498,7 @@
                 const revenda = document.getElementById('arrival-revenda-filter')?.value || '';
                 let data = [];
                 if (supabase && supabase.from) {
-                    let query = supabase.from('controle_pedidos').select('*');
-                    if (revenda) query = query.eq('revenda', revenda);
-                    const res = await query;
+                    const res = await supabase.from('controle_pedidos').select('*');
                     if (res.error) { } else { data = res.data || []; }
                 }
                 const tbody = document.getElementById('arrival-table')?.getElementsByTagName('tbody')[0];
@@ -4300,7 +4519,7 @@
                     status: document.getElementById('arrival-status-filter')?.value || 'Estoque'
                 };
                 const matchText = (a, b) => (a||'').toString().toLowerCase().includes((b||'').toString().toLowerCase());
-                const matchEq = (a, b) => !b || (a||'') === b;
+                const matchEq = (a, b) => !b || ((''+(a||'')).trim().toLowerCase() === ((''+b).trim().toLowerCase()));
                 const matchDateEq = (a, b) => !b || (normalizeDateToISO?.(a) || a || '') === b;
                 const matchYearMonth = (a, year, month) => {
                     const iso = normalizeDateToISO?.(a) || a || '';
@@ -5074,6 +5293,7 @@
             document.getElementById('shipping-filter').value = '';
             document.getElementById('revenda-filter').value = '';
             document.getElementById('status-filter').value = '';
+            const spf = document.getElementById('order-status-pedido-filter'); if (spf) spf.value = 'Pendente';
             loadOrders();
         });
 
@@ -5119,7 +5339,50 @@
 
         (function(){
             const on = (id, evt, fn) => { const el = document.getElementById(id); if (el) el.addEventListener(evt, fn); };
-            ['year-filter','month-filter','date-filter','shipping-filter','revenda-filter','status-filter']
+            function initMultiSelectDropdown(id){
+                const sel = document.getElementById(id);
+                const cont = document.getElementById(id+'-ms');
+                if (!sel || !cont) return;
+                sel.style.display = 'none';
+                const build = () => {
+                    const opts = Array.from(sel.options).map(o => ({ value: o.value, text: o.textContent, selected: o.selected })).filter(o => o.value !== '');
+                    cont.innerHTML = '';
+                    const wrap = document.createElement('div'); wrap.style.position='relative'; wrap.style.width='100%';
+                    const btn = document.createElement('button'); btn.type='button'; btn.className='filter-select'; btn.style.width='100%'; btn.style.textAlign='left'; btn.style.padding='6px'; btn.style.border='1px solid #ddd'; btn.style.borderRadius='4px';
+                    const caret = document.createElement('span'); caret.textContent=' ▾'; caret.style.float='right';
+                    const label = () => { const arr = Array.from(sel.options).filter(op=>op.value!=='').filter(op=>op.selected).map(op=>op.textContent); if (arr.length===0) return 'Todas'; if (arr.length<=3) return arr.join(', '); return arr.length+' selecionadas'; };
+                    const setBtnText = () => { btn.textContent = label(); btn.appendChild(caret); };
+                    setBtnText();
+                    const menu = document.createElement('div'); menu.style.position='absolute'; menu.style.left='0'; menu.style.right='0'; menu.style.background='#fff'; menu.style.border='1px solid #ddd'; menu.style.borderRadius='4px'; menu.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'; menu.style.zIndex='1000'; menu.style.maxHeight='220px'; menu.style.overflow='auto'; menu.style.display='none';
+                    const head = document.createElement('div'); head.style.display='flex'; head.style.justifyContent='space-between'; head.style.gap='8px'; head.style.padding='6px 8px';
+                    const aAll = document.createElement('button'); aAll.type='button'; aAll.textContent='Todos'; aAll.style.fontSize='12px';
+                    const aClear = document.createElement('button'); aClear.type='button'; aClear.textContent='Limpar'; aClear.style.fontSize='12px';
+                    head.appendChild(aAll); head.appendChild(aClear); menu.appendChild(head);
+                    opts.forEach(o => {
+                        const row = document.createElement('label'); row.style.display='flex'; row.style.alignItems='center'; row.style.gap='8px'; row.style.padding='6px 8px';
+                        const cb = document.createElement('input'); cb.type='checkbox'; cb.checked=!!o.selected; cb.setAttribute('data-value', o.value);
+                        const span = document.createElement('span'); span.textContent = o.text;
+                        row.appendChild(cb); row.appendChild(span); menu.appendChild(row);
+                    });
+                    const open = () => { menu.style.display = (menu.style.display==='none' ? 'block' : 'none'); };
+                    btn.onclick = open;
+                    document.addEventListener('click', function(ev){ if (!wrap.contains(ev.target)) menu.style.display='none'; });
+                    const applySel = () => {
+                        const boxes = Array.from(menu.querySelectorAll('input[type="checkbox"]'));
+                        const values = boxes.filter(b=>b.checked).map(b=>b.getAttribute('data-value'));
+                        Array.from(sel.options).forEach(op => { op.selected = values.includes(op.value); });
+                        setBtnText();
+                        const event = new Event('change', { bubbles: true }); sel.dispatchEvent(event);
+                    };
+                    menu.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.addEventListener('change', applySel); });
+                    aAll.onclick = () => { menu.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = true; }); applySel(); };
+                    aClear.onclick = () => { menu.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; }); applySel(); };
+                    const container = document.createElement('div'); container.appendChild(btn); container.appendChild(menu); wrap.appendChild(container); cont.appendChild(wrap);
+                };
+                build();
+            }
+            function syncMultiSelectFromSelect(id){ const sel = document.getElementById(id); const cont = document.getElementById(id+'-ms'); if (!sel || !cont) return; initMultiSelectDropdown(id); }
+            ['year-filter','month-filter','date-filter','shipping-filter','revenda-filter','status-filter','order-status-pedido-filter']
                 .forEach(id => on(id, 'change', () => loadOrders()));
             ['order-number-filter','part-number-filter','nf-filter','tw-filter','consultant-filter','client-filter','supplier-filter']
                 .forEach(id => on(id, 'input', () => loadOrders()));
@@ -5137,10 +5400,12 @@
             ['reqdel-order-number-filter','reqdel-part-number-filter','reqdel-nf-filter']
                 .forEach(id => on(id, 'input', () => loadOrdersForDeleteRequest()));
 
-            ['dash-year-filter','dash-month-filter','dash-revenda-filter','dash-status-filter','dash-shipping-filter']
-                .forEach(id => on(id, 'change', () => loadDashboard()));
-            ['dash-client-filter']
-                .forEach(id => on(id, 'input', () => loadDashboard()));
+            ['dash-year-filter','dash-month-filter','dash-week-filter','dash-date-filter','dash-revenda-filter','dash-status-filter','dash-order-status-filter','dash-shipping-filter','dash-conversion-rate']
+                .forEach(id => on(id, 'change', () => { if (id==='dash-conversion-rate') { const el=document.getElementById('dash-conversion-rate'); if (el) localStorage.setItem('dash:conversion_rate', el.value||''); } loadDashboard(); }));
+            ['dash-client-filter','dash-conversion-rate']
+                .forEach(id => on(id, 'input', () => { if (id==='dash-conversion-rate') { const el=document.getElementById('dash-conversion-rate'); if (el) localStorage.setItem('dash:conversion_rate', el.value||''); } loadDashboard(); }));
+            initMultiSelectDropdown('dash-week-filter');
+            initMultiSelectDropdown('dash-date-filter');
             ['arrival-year-filter','arrival-month-filter','arrival-date-filter','arrival-revenda-filter','arrival-status-filter']
                 .forEach(id => on(id, 'change', () => loadArrivalParts()));
             ['arrival-order-number-filter','arrival-part-number-filter','arrival-nf-filter','arrival-consultant-filter','arrival-client-filter','arrival-supplier-filter']
@@ -5148,6 +5413,83 @@
             on('arrival-clear-filters', 'click', () => { ['arrival-year-filter','arrival-month-filter','arrival-order-number-filter','arrival-part-number-filter','arrival-date-filter','arrival-consultant-filter','arrival-client-filter','arrival-supplier-filter','arrival-nf-filter','arrival-revenda-filter','arrival-status-filter'].forEach(id => { const el = document.getElementById(id); if (!el) return; if (el.tagName === 'SELECT') el.value = ''; else el.value=''; }); loadArrivalParts(); });
             on('arrival-select-all', 'click', () => { Array.from(document.querySelectorAll('#arrival-table tbody input.arrival-select')).forEach(cb => { cb.checked = true; }); });
             on('arrival-send-email', 'click', () => { sendArrivalEmail(); });
+            function toggleOrdersFullscreen(){
+                const cont = document.getElementById('orders-table-container');
+                const resp = document.getElementById('orders-table-responsive');
+                const btn = document.getElementById('orders-fullscreen-btn');
+                if (!cont || !resp || !btn) return;
+                const active = cont.getAttribute('data-full') === '1';
+                if (!active) {
+                    cont.setAttribute('data-full','1');
+                    cont.style.position='fixed'; cont.style.top='0'; cont.style.left='0'; cont.style.right='0'; cont.style.bottom='0'; cont.style.zIndex='900'; cont.style.background='#fff'; cont.style.padding='12px';
+                    resp.style.maxHeight='calc(100vh - 80px)';
+                    btn.textContent='Sair da Tela Cheia';
+                    let exit = document.getElementById('orders-exit-full');
+                    if (!exit) { 
+                        exit = document.createElement('button'); 
+                        exit.id='orders-exit-full'; exit.className='btn btn-info'; exit.textContent='Sair da Tela Cheia';
+                        exit.style.position='absolute'; exit.style.top='12px'; exit.style.right='12px'; exit.style.zIndex='950'; exit.style.padding='6px 10px'; exit.style.width='auto'; exit.style.margin='0';
+                        cont.appendChild(exit);
+                        exit.addEventListener('click', toggleOrdersFullscreen);
+                    }
+                } else {
+                    cont.setAttribute('data-full','0');
+                    cont.style.position=''; cont.style.top=''; cont.style.left=''; cont.style.right=''; cont.style.bottom=''; cont.style.zIndex=''; cont.style.background=''; cont.style.padding='';
+                    resp.style.maxHeight='360px';
+                    btn.textContent='Tela Cheia';
+                    const exit = document.getElementById('orders-exit-full'); if (exit) try { exit.remove(); } catch {}
+                }
+            }
+            function toggleConsultantFullscreen(){
+                const cont = document.getElementById('consultant-table-container');
+                const resp = document.getElementById('consultant-table-responsive');
+                const btn = document.getElementById('consultant-fullscreen-btn');
+                if (!cont || !resp || !btn) return;
+                const active = cont.getAttribute('data-full') === '1';
+                if (!active) {
+                    cont.setAttribute('data-full','1');
+                    cont.style.position='fixed'; cont.style.top='0'; cont.style.left='0'; cont.style.right='0'; cont.style.bottom='0'; cont.style.zIndex='900'; cont.style.background='#fff'; cont.style.padding='12px';
+                    resp.style.maxHeight='calc(100vh - 80px)';
+                    btn.textContent='Sair da Tela Cheia';
+                    let exit = document.getElementById('consultant-exit-full');
+                    if (!exit) { 
+                        exit = document.createElement('button'); 
+                        exit.id='consultant-exit-full'; exit.className='btn btn-info'; exit.textContent='Sair da Tela Cheia';
+                        exit.style.position='absolute'; exit.style.top='12px'; exit.style.right='12px'; exit.style.zIndex='950'; exit.style.padding='6px 10px'; exit.style.width='auto'; exit.style.margin='0';
+                        cont.appendChild(exit);
+                        exit.addEventListener('click', toggleConsultantFullscreen);
+                    }
+                } else {
+                    cont.setAttribute('data-full','0');
+                    cont.style.position=''; cont.style.top=''; cont.style.left=''; cont.style.right=''; cont.style.bottom=''; cont.style.zIndex=''; cont.style.background=''; cont.style.padding='';
+                    resp.style.maxHeight='800px';
+                    btn.textContent='Tela Cheia';
+                    const exit = document.getElementById('consultant-exit-full'); if (exit) try { exit.remove(); } catch {}
+                }
+            }
+            on('consultant-fullscreen-btn','click', toggleConsultantFullscreen);
+            on('orders-fullscreen-btn','click', toggleOrdersFullscreen);
+            function setupOrdersSorting(){
+                const ths = Array.from(document.querySelectorAll('#orders-table thead th'));
+                const keys = ['actions','status_pedido','revenda','numero_pedido','fornecedor','data_pedido','cliente','ctt_orc','part_number','descricao','qtde','atd','bo','faturado','prev_fat','nf','custo_und','custo_total','transportadora','previsao','chegada','atraso','lead_time','consultor','obs','tw_inicial','prev_atd','tw_nova','nova_prev_atd','status'];
+                ths.forEach((th, idx) => {
+                    const key = keys[idx];
+                    if (key === 'actions') return;
+                    const orig = th.getAttribute('data-orig') || th.textContent;
+                    th.setAttribute('data-orig', orig);
+                    th.style.cursor='pointer';
+                    th.addEventListener('click', function(){
+                        const cur = window.ordersSort || { key:'', dir:'asc' };
+                        let dir = 'asc';
+                        if (cur.key === key) dir = (cur.dir === 'asc' ? 'desc' : 'asc');
+                        window.ordersSort = { key, dir };
+                        ths.forEach(h => { const o = h.getAttribute('data-orig') || h.textContent; h.textContent = o; });
+                        th.textContent = orig + (dir==='asc' ? ' ↑' : ' ↓');
+                        loadOrders();
+                    });
+                });
+            }
+            setupOrdersSorting();
         })();
 
         // Permissions
