@@ -248,6 +248,7 @@
         .bar { height: 16px; background: var(--secondary-color); border-radius: 4px; position: relative; color: #fff; display: flex; align-items: center; justify-content: flex-end; padding-right: 6px; font-size: 12px; }
         .bar-value { width: 80px; text-align: right; font-size: 12px; color: #333; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .chart-tooltip { position: fixed; background: rgba(0,0,0,0.85); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px; pointer-events: none; z-index: 9999; box-shadow: 0 2px 8px rgba(0,0,0,0.2); white-space: nowrap; }
         
         .user-info {
             margin-right: 20px;
@@ -911,14 +912,15 @@
                             </div>
                             <div class="filter-group">
                                 <label for="dash-revenda-filter">Revenda</label>
-                                <select id="dash-revenda-filter" class="filter-select">
-                                    <option value="">Todas</option>
-                                    <option value="Recife">Recife</option>
-                                    <option value="Natal">Natal</option>
-                                    <option value="Fortaleza">Fortaleza</option>
-                                    <option value="Petrolina">Petrolina</option>
-                                    <option value="Paraíba">Paraíba</option>
-                                </select>
+                <select id="dash-revenda-filter" class="filter-select">
+                    <option value="">Todas</option>
+                    <option value="Recife">Recife</option>
+                    <option value="Natal">Natal</option>
+                    <option value="Fortaleza">Fortaleza</option>
+                    <option value="Petrolina">Petrolina</option>
+                    <option value="Paraíba">Paraíba</option>
+                    <option value="Matriz">Matriz</option>
+                </select>
                             </div>
                             <div class="filter-group">
                                 <label for="dash-status-filter">Status</label>
@@ -987,7 +989,8 @@
 
                     <div class="dash-section">
                         <h3 class="section-title">Top 20 Itens</h3>
-                        <div class="filter-actions" style="margin:6px 0; display:flex; justify-content:flex-end;">
+                        <div class="filter-actions" style="margin:6px 0; display:flex; gap:8px; justify-content:flex-end;">
+                            <button class="btn btn-info" id="dash-top20-scope">Filiais: Selecionada</button>
                             <button class="btn btn-info" id="dash-top20-toggle">Ordenar por: Valor</button>
                         </div>
                         <div class="data-table-container">
@@ -1108,14 +1111,15 @@
                             </div>
                             <div class="filter-group">
                                 <label for="revenda-filter">Revenda</label>
-                                <select id="revenda-filter" class="filter-select">
-                                    <option value="">Todas</option>
-                                    <option value="Recife">Recife</option>
-                                    <option value="Natal">Natal</option>
-                                    <option value="Fortaleza">Fortaleza</option>
-                                    <option value="Petrolina">Petrolina</option>
-                                    <option value="Paraíba">Paraíba</option>
-                                </select>
+                <select id="revenda-filter" class="filter-select">
+                    <option value="">Todas</option>
+                    <option value="Recife">Recife</option>
+                    <option value="Natal">Natal</option>
+                    <option value="Fortaleza">Fortaleza</option>
+                    <option value="Petrolina">Petrolina</option>
+                    <option value="Paraíba">Paraíba</option>
+                    <option value="Matriz">Matriz</option>
+                </select>
                             </div>
                             <div class="filter-group">
                                 <label for="status-filter">Status</label>
@@ -1251,14 +1255,15 @@
                             </div>
                             <div class="filter-group">
                                 <label for="arrival-revenda-filter">Revenda</label>
-                                <select id="arrival-revenda-filter" class="filter-select">
-                                    <option value="">Todas</option>
-                                    <option value="Recife">Recife</option>
-                                    <option value="Natal">Natal</option>
-                                    <option value="Fortaleza">Fortaleza</option>
-                                    <option value="Petrolina">Petrolina</option>
-                                    <option value="Paraíba">Paraíba</option>
-                                </select>
+                <select id="arrival-revenda-filter" class="filter-select">
+                    <option value="">Todas</option>
+                    <option value="Recife">Recife</option>
+                    <option value="Natal">Natal</option>
+                    <option value="Fortaleza">Fortaleza</option>
+                    <option value="Petrolina">Petrolina</option>
+                    <option value="Paraíba">Paraíba</option>
+                    <option value="Matriz">Matriz</option>
+                </select>
                             </div>
                         </div>
 
@@ -1390,14 +1395,15 @@
                             </div>
                             <div class="filter-group">
                                 <label for="consultant-revenda-filter">Revenda</label>
-                                <select id="consultant-revenda-filter" class="filter-select">
-                                    <option value="">Todas</option>
-                                    <option value="Recife">Recife</option>
-                                    <option value="Natal">Natal</option>
-                                    <option value="Fortaleza">Fortaleza</option>
-                                    <option value="Petrolina">Petrolina</option>
-                                    <option value="Paraíba">Paraíba</option>
-                                </select>
+                <select id="consultant-revenda-filter" class="filter-select">
+                    <option value="">Todas</option>
+                    <option value="Recife">Recife</option>
+                    <option value="Natal">Natal</option>
+                    <option value="Fortaleza">Fortaleza</option>
+                    <option value="Petrolina">Petrolina</option>
+                    <option value="Paraíba">Paraíba</option>
+                    <option value="Matriz">Matriz</option>
+                </select>
                             </div>
                             <div class="filter-group">
                                 <label for="consultant-status-filter">Status</label>
@@ -1673,14 +1679,15 @@
                                 </div>
                                 <div class="filter-group">
                                     <label for="delete-revenda-filter">Revenda</label>
-                                    <select id="delete-revenda-filter" class="filter-select">
-                                        <option value="">Todas</option>
-                                        <option value="Recife">Recife</option>
-                                        <option value="Natal">Natal</option>
-                                        <option value="Fortaleza">Fortaleza</option>
-                                        <option value="Petrolina">Petrolina</option>
-                                        <option value="Paraíba">Paraíba</option>
-                                    </select>
+                <select id="delete-revenda-filter" class="filter-select">
+                    <option value="">Todas</option>
+                    <option value="Recife">Recife</option>
+                    <option value="Natal">Natal</option>
+                    <option value="Fortaleza">Fortaleza</option>
+                    <option value="Petrolina">Petrolina</option>
+                    <option value="Paraíba">Paraíba</option>
+                    <option value="Matriz">Matriz</option>
+                </select>
                                 </div>
                                 <div class="filter-group">
                                     <label for="delete-nf-filter">Número da Nota</label>
@@ -1778,14 +1785,15 @@
                         <div class="filter-row">
                             <div class="filter-group">
                                 <label for="reqdel-revenda-filter">Revenda</label>
-                                <select id="reqdel-revenda-filter" class="filter-select">
-                                    <option value="">Todas</option>
-                                    <option value="Recife">Recife</option>
-                                    <option value="Natal">Natal</option>
-                                    <option value="Fortaleza">Fortaleza</option>
-                                    <option value="Petrolina">Petrolina</option>
-                                    <option value="Paraíba">Paraíba</option>
-                                </select>
+                <select id="reqdel-revenda-filter" class="filter-select">
+                    <option value="">Todas</option>
+                    <option value="Recife">Recife</option>
+                    <option value="Natal">Natal</option>
+                    <option value="Fortaleza">Fortaleza</option>
+                    <option value="Petrolina">Petrolina</option>
+                    <option value="Paraíba">Paraíba</option>
+                    <option value="Matriz">Matriz</option>
+                </select>
                             </div>
                             <div class="filter-group">
                                 <label for="reqdel-status-filter">Status</label>
@@ -4449,8 +4457,9 @@
                 renderPercEmergDelta('dash-percent-emergencia-delta', percEmergencia, prevM, emg, 'Mês');
                 renderPercEmergDelta('dash-percent-emergencia-delta', percEmergencia, prevY, emg, 'Ano');
                 const sortMode = (localStorage.getItem('dash:top20_sort')||'valor');
+                const scope = (localStorage.getItem('dash:top20_scope')||'selected');
                 const topSource = (() => {
-                    if (!filters.revenda) return filtered;
+                    if (!filters.revenda || scope==='selected') return filtered;
                     return merged.filter(order => {
                         const okYM = matchYearMonth(order.data_pedido, filters.year, filters.month);
                         const okWeek = (() => {
@@ -4522,6 +4531,12 @@
                     toggleBtn.textContent = 'Ordenar por: ' + (sortMode==='qtde' ? 'Qtde' : 'Valor');
                     toggleBtn.onclick = function(){ const next = (localStorage.getItem('dash:top20_sort')||'valor')==='valor' ? 'qtde' : 'valor'; localStorage.setItem('dash:top20_sort', next); loadDashboard(); };
                 }
+                const scopeBtn = document.getElementById('dash-top20-scope');
+                if (scopeBtn) {
+                    const label = (scope==='all' ? 'Todas' : 'Selecionada');
+                    scopeBtn.textContent = 'Filiais: ' + label;
+                    scopeBtn.onclick = function(){ const cur = (localStorage.getItem('dash:top20_scope')||'selected'); const next = (cur==='selected' ? 'all' : 'selected'); localStorage.setItem('dash:top20_scope', next); loadDashboard(); };
+                }
                 const groupBy = (arr, keySel, valSel) => {
                     const m = new Map();
                     const c = new Map();
@@ -4541,13 +4556,27 @@
                 const byRevendaEmerg = groupBy(only(filtered, o=> canonicalCase(o.status||'')==='Emergência'), o=>canonicalCase(o.revenda||''), o=>toFloat(o.custo_total)||0).sort((a,b)=>b.value-a.value);
                 const renderBars = (id, data) => {
                     const el = document.getElementById(id); if (!el) return; el.innerHTML = '';
+                    let tooltip = document.getElementById('chart-tooltip');
+                    if (!tooltip) { tooltip = document.createElement('div'); tooltip.id='chart-tooltip'; tooltip.className='chart-tooltip'; tooltip.style.display='none'; document.body.appendChild(tooltip); }
                     const max = Math.max(1, ...data.map(d=>d.value||0));
                     data.forEach(d => {
                         const row = document.createElement('div'); row.className='bar-row';
                         const lab = document.createElement('div'); lab.className='bar-label'; lab.textContent = d.label || '';
-                        const bar = document.createElement('div'); bar.className='bar'; bar.style.width = ((d.value||0)/max*100)+'%';
+                        const bar = document.createElement('div'); bar.className='bar'; bar.style.width = ((d.value||0)/max*100)+'%'; bar.style.cursor='pointer';
                         const cnt = document.createElement('small'); cnt.textContent = (d.count||0).toString(); bar.appendChild(cnt);
                         const val = document.createElement('div'); val.className='bar-value'; val.textContent = fmtMoney(d.value||0);
+                        bar.title = `${lab.textContent} | Quantidade: ${d.count||0} | Valor: ${fmtMoney(d.value||0)}`;
+                        bar.addEventListener('mouseenter', (e) => {
+                            tooltip.innerHTML = `<div>${lab.textContent}</div><div>Quantidade: ${d.count||0}</div><div>Valor: ${fmtMoney(d.value||0)}</div>`;
+                            tooltip.style.display='block';
+                            tooltip.style.left = (e.clientX + 12) + 'px';
+                            tooltip.style.top = (e.clientY + 12) + 'px';
+                        });
+                        bar.addEventListener('mousemove', (e) => {
+                            tooltip.style.left = (e.clientX + 12) + 'px';
+                            tooltip.style.top = (e.clientY + 12) + 'px';
+                        });
+                        bar.addEventListener('mouseleave', () => { tooltip.style.display='none'; });
                         row.appendChild(lab); row.appendChild(bar); row.appendChild(val); el.appendChild(row);
                     });
                 };
