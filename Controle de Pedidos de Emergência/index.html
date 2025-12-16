@@ -224,7 +224,7 @@
         }
 
         .dash-filters { margin: 16px 0; }
-        .dash-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 16px 0; }
+        .dash-cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin: 16px 0; }
         .dash-card { background: #fff; border-left: 6px solid var(--primary-color); border-radius: 8px; padding: 14px 14px 14px 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform .2s ease, box-shadow .2s ease; }
         .dash-card:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.15); }
         .dash-card-header { display:flex; align-items:center; gap:10px; }
@@ -987,6 +987,9 @@
 
                     <div class="dash-section">
                         <h3 class="section-title">Top 20 Itens</h3>
+                        <div class="filter-actions" style="margin:6px 0; display:flex; justify-content:flex-end;">
+                            <button class="btn btn-info" id="dash-top20-toggle">Ordenar por: Valor</button>
+                        </div>
                         <div class="data-table-container">
                             <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
                                 <table class="data-table" id="dashboard-top20-table">
@@ -1140,7 +1143,7 @@
                     </div>
                     
                     <div class="data-table-container" id="orders-table-container">
-                        <div class="table-responsive" id="orders-table-responsive" style="max-height: 360px; overflow-y: auto;">
+                        <div class="table-responsive" id="orders-table-responsive" style="max-height: 800px; overflow-y: auto;">
                             <table class="data-table" id="orders-table">
                                 <thead>
                                     <tr>
@@ -1266,6 +1269,14 @@
                                     <option value="">Todos</option>
                                     <option value="Estoque" selected>Estoque</option>
                                     <option value="Emergência">Emergência</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="arrival-order-status-filter">Status Pedido</label>
+                                <select id="arrival-order-status-filter" class="filter-select">
+                                    <option value="Pendente" selected>Pendente</option>
+                                    <option value="Atendido">Atendido</option>
+                                    <option value="">Todos</option>
                                 </select>
                             </div>
                             <div class="filter-group" style="flex:2;">
@@ -3077,27 +3088,59 @@
             });
             try {
                 const serverBatch = batch.map(r => prepareForServerRow(r));
-                let { error } = await supabase.from('controle_pedidos').insert(serverBatch);
-                if (error) {
-                    const bad = extractBigintErrorValue(error);
-                    if (bad) {
-                        const rows2 = sanitizeRowsForBigintError(serverBatch, bad);
-                        const res2 = await supabase.from('controle_pedidos').insert(rows2);
-                        error = res2.error;
+                const isBlank = (v) => (v==null || v==='');
+                if (supabase && supabase.from) {
+                    for (const r of serverBatch) {
+                        const n = normalizeOrderNum(r.numero_pedido||'');
+                        const p = normalizePartNumber(r.part_number||'');
+                        if (!n) continue;
+                        let existing = null;
+                        try {
+                            const sel = p ? supabase.from('controle_pedidos').select('*').eq('numero_pedido', n).eq('part_number', p).limit(1).single() : supabase.from('controle_pedidos').select('*').eq('numero_pedido', n).limit(1).single();
+                            const { data } = await sel; existing = data || null;
+                        } catch {}
+                        if (existing && existing.id) {
+                            const patch = {};
+                            Object.keys(r).forEach(k => { const rv = r[k]; const ev = existing[k]; if (!isBlank(rv) && isBlank(ev)) { patch[k] = rv; } });
+                            if (Object.keys(patch).length) { await supabase.from('controle_pedidos').update(patch).eq('id', existing.id); }
+                        } else {
+                            await supabase.from('controle_pedidos').insert([r]);
+                        }
                     }
-                }
-                if (error) {
-                    addLocalOrders(batch);
-                    alert('Erro ao salvar no servidor: ' + (error.message || error.code || ''));
+                    alert('Itens atualizados/inseridos com sucesso!');
                 } else {
-                    alert('Itens salvos com sucesso!');
+                    const local = getLocalOrders();
+                    const byKey = new Map(local.map(o => [buildNotifKey(o.numero_pedido||'', o.part_number||''), o]));
+                    const nextLocal = [...local];
+                    serverBatch.forEach(r => {
+                        const k = buildNotifKey(r.numero_pedido||'', r.part_number||'');
+                        const ex = byKey.get(k) || null;
+                        if (ex) {
+                            Object.keys(r).forEach(key => { const rv = r[key]; const ev = ex[key]; if (!isBlank(rv) && isBlank(ev)) { ex[key] = rv; } });
+                        } else {
+                            nextLocal.push({ ...r, id: 'local-'+Date.now() });
+                        }
+                    });
+                    setLocalOrders(nextLocal);
+                    alert('Sem conexão com servidor. Itens atualizados/inseridos localmente.');
                 }
                 bulkModal.style.display='none';
                 loadOrders();
                 loadConsultantData();
             } catch(err) {
-                addLocalOrders(batch);
-                alert('Sem conexão com servidor. Itens salvos localmente.');
+                const local = getLocalOrders();
+                const byKey = new Map(local.map(o => [buildNotifKey(o.numero_pedido||'', o.part_number||''), o]));
+                const nextLocal = [...local];
+                const isBlank = (v) => (v==null || v==='');
+                const serverBatch = batch.map(r => prepareForServerRow(r));
+                serverBatch.forEach(r => {
+                    const k = buildNotifKey(r.numero_pedido||'', r.part_number||'');
+                    const ex = byKey.get(k) || null;
+                    if (ex) { Object.keys(r).forEach(key => { const rv = r[key]; const ev = ex[key]; if (!isBlank(rv) && isBlank(ev)) { ex[key] = rv; } }); }
+                    else { nextLocal.push({ ...r, id: 'local-'+Date.now() }); }
+                });
+                setLocalOrders(nextLocal);
+                alert('Falha na comunicação. Itens atualizados/inseridos localmente.');
                 bulkModal.style.display='none';
                 loadOrders();
                 loadConsultantData();
@@ -4405,25 +4448,64 @@
                 };
                 renderPercEmergDelta('dash-percent-emergencia-delta', percEmergencia, prevM, emg, 'Mês');
                 renderPercEmergDelta('dash-percent-emergencia-delta', percEmergencia, prevY, emg, 'Ano');
+                const sortMode = (localStorage.getItem('dash:top20_sort')||'valor');
+                const topSource = (() => {
+                    if (!filters.revenda) return filtered;
+                    return merged.filter(order => {
+                        const okYM = matchYearMonth(order.data_pedido, filters.year, filters.month);
+                        const okWeek = (() => {
+                            if (!filters.weeks || filters.weeks.length === 0) return true;
+                            const iso = normalizeDateToISO?.(order.data_pedido) || order.data_pedido || '';
+                            if (!iso) return false;
+                            const [Y,M,D] = iso.split('T')[0].split('-');
+                            const d = new Date(Date.UTC(Number(Y), Number(M)-1, Number(D)));
+                            const day = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - day);
+                            const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+                            const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+                            const okW = filters.weeks.some(w => Number(week) === Number(w));
+                            const okY = !filters.year || String(Y) === String(filters.year);
+                            return okW && okY;
+                        })();
+                        const okDatePick = (() => {
+                            if (!filters.dates || filters.dates.length === 0) return true;
+                            const iso = normalizeDateToISO?.(order.data_pedido) || order.data_pedido || '';
+                            if (!iso) return false;
+                            const dayStr = iso.split('T')[0];
+                            return filters.dates.some(v => String(v) === String(dayStr));
+                        })();
+                        const okCli = matchText(order.cliente, filters.cliente);
+                        const okShip = matchEq(order.transportadora, filters.transportadora);
+                        const okStatus = matchEq(order.status, filters.status);
+                        const hasChegada = !!(normalizeDateToISO?.(order.chegada) || order.chegada);
+                        const curPedidoStatus = hasChegada ? 'Atendido' : 'Pendente';
+                        const okPedidoStatus = !filters.pedido_status || (curPedidoStatus.toLowerCase() === filters.pedido_status.toLowerCase());
+                        return okYM && okWeek && okDatePick && okCli && okShip && okStatus && okPedidoStatus;
+                    });
+                })();
                 const topMap = new Map();
-                filtered.forEach(o => {
-                    const key = (o.descricao || '').trim();
-                    if (!key) return;
-                    const cur = topMap.get(key) || { count: 0, custo_total: 0, qtde: 0, revendas: {}, clientes: {} };
+                topSource.forEach(o => {
+                    const desc = (o.descricao || '').trim();
+                    if (!desc) return;
+                    const pn = normalizePartNumber(o.part_number || '');
+                    const rev = canonicalCase(o.revenda || '');
+                    const key = [pn || '', desc, rev].join('||');
+                    const cur = topMap.get(key) || { count: 0, custo_total: 0, qtde: 0, revenda: rev, descricao: desc, part_number: pn, clientes: {} };
                     cur.count += 1;
                     cur.custo_total += toFloat(o.custo_total) || 0;
                     cur.qtde += toInt(o.qtde) || 0;
-                        const r = canonicalCase(o.revenda || '');
                     const c = o.cliente || '';
-                    cur.revendas[r] = (cur.revendas[r] || 0) + 1;
                     cur.clientes[c] = (cur.clientes[c] || 0) + 1;
                     topMap.set(key, cur);
                 });
-                const topArr = Array.from(topMap.entries()).map(([descricao, v]) => {
-                    const topRev = Object.entries(v.revendas).sort((a,b)=>b[1]-a[1])[0]?.[0] || '';
+                let topArr = Array.from(topMap.values()).map(v => {
                     const topCli = Object.entries(v.clientes).sort((a,b)=>b[1]-a[1])[0]?.[0] || '';
-                    return { descricao, custo_total: v.custo_total, qtde: v.qtde, revenda: topRev, cliente: topCli, count: v.count };
-                }).sort((a,b)=> b.count - a.count).slice(0,20);
+                    const descricao = (v.part_number ? v.part_number + ' - ' : '') + v.descricao;
+                    return { descricao, custo_total: v.custo_total, qtde: v.qtde, revenda: v.revenda, cliente: topCli, count: v.count };
+                });
+                topArr = topArr.sort((a,b)=> {
+                    if (sortMode === 'qtde') return (b.qtde||0) - (a.qtde||0);
+                    return (b.custo_total||0) - (a.custo_total||0);
+                }).slice(0,20);
                 const tbody = document.querySelector('#dashboard-top20-table tbody');
                 if (tbody) {
                     tbody.innerHTML = '';
@@ -4434,6 +4516,11 @@
                         });
                         tbody.appendChild(tr);
                     });
+                }
+                const toggleBtn = document.getElementById('dash-top20-toggle');
+                if (toggleBtn) {
+                    toggleBtn.textContent = 'Ordenar por: ' + (sortMode==='qtde' ? 'Qtde' : 'Valor');
+                    toggleBtn.onclick = function(){ const next = (localStorage.getItem('dash:top20_sort')||'valor')==='valor' ? 'qtde' : 'valor'; localStorage.setItem('dash:top20_sort', next); loadDashboard(); };
                 }
                 const groupBy = (arr, keySel, valSel) => {
                     const m = new Map();
@@ -4493,7 +4580,8 @@
                     cliente: document.getElementById('arrival-client-filter')?.value || '',
                     fornecedor: document.getElementById('arrival-supplier-filter')?.value || '',
                     revenda: revenda,
-                    status: document.getElementById('arrival-status-filter')?.value || 'Estoque'
+                    status: document.getElementById('arrival-status-filter')?.value || 'Estoque',
+                    pedido_status: document.getElementById('arrival-order-status-filter')?.value || 'Pendente'
                 };
                 const matchText = (a, b) => (a||'').toString().toLowerCase().includes((b||'').toString().toLowerCase());
                 const matchEq = (a, b) => !b || ((''+(a||'')).trim().toLowerCase() === ((''+b).trim().toLowerCase()));
@@ -4517,7 +4605,10 @@
                     const okCli = matchText(order.cliente, filters.cliente);
                     const okFor = matchText(order.fornecedor, filters.fornecedor);
                     const okStatus = matchEq(order.status, filters.status);
-                    return okRev && okYM && okNum && okPn && okNf && okDate && okCons && okCli && okFor && okStatus;
+                    const hasChegada = !!(normalizeDateToISO?.(order.chegada) || order.chegada);
+                    const curPedidoStatus = hasChegada ? 'Atendido' : 'Pendente';
+                    const okPedidoStatus = !filters.pedido_status || (curPedidoStatus.toLowerCase() === filters.pedido_status.toLowerCase());
+                    return okRev && okYM && okNum && okPn && okNf && okDate && okCons && okCli && okFor && okStatus && okPedidoStatus;
                 });
                 const fmt = (v) => (v==null? '' : String(v));
                 const fmtDate = (v) => formatDateDisplay(v||'');
@@ -5417,11 +5508,11 @@
                 .forEach(id => on(id, 'input', () => { if (id==='dash-conversion-rate') { const el=document.getElementById('dash-conversion-rate'); if (el) localStorage.setItem('dash:conversion_rate', el.value||''); } loadDashboard(); }));
             initMultiSelectDropdown('dash-week-filter');
             initMultiSelectDropdown('dash-date-filter');
-            ['arrival-year-filter','arrival-month-filter','arrival-date-filter','arrival-revenda-filter','arrival-status-filter']
+            ['arrival-year-filter','arrival-month-filter','arrival-date-filter','arrival-revenda-filter','arrival-status-filter','arrival-order-status-filter']
                 .forEach(id => on(id, 'change', () => loadArrivalParts()));
             ['arrival-order-number-filter','arrival-part-number-filter','arrival-nf-filter','arrival-consultant-filter','arrival-client-filter','arrival-supplier-filter']
                 .forEach(id => on(id, 'input', () => loadArrivalParts()));
-            on('arrival-clear-filters', 'click', () => { ['arrival-year-filter','arrival-month-filter','arrival-order-number-filter','arrival-part-number-filter','arrival-date-filter','arrival-consultant-filter','arrival-client-filter','arrival-supplier-filter','arrival-nf-filter','arrival-revenda-filter','arrival-status-filter'].forEach(id => { const el = document.getElementById(id); if (!el) return; if (el.tagName === 'SELECT') el.value = ''; else el.value=''; }); loadArrivalParts(); });
+            on('arrival-clear-filters', 'click', () => { ['arrival-year-filter','arrival-month-filter','arrival-order-number-filter','arrival-part-number-filter','arrival-date-filter','arrival-consultant-filter','arrival-client-filter','arrival-supplier-filter','arrival-nf-filter','arrival-revenda-filter','arrival-status-filter','arrival-order-status-filter'].forEach(id => { const el = document.getElementById(id); if (!el) return; if (el.tagName === 'SELECT') { el.value = (id==='arrival-order-status-filter' ? 'Pendente' : ''); } else el.value=''; }); loadArrivalParts(); });
             on('arrival-select-all', 'click', () => { Array.from(document.querySelectorAll('#arrival-table tbody input.arrival-select')).forEach(cb => { cb.checked = true; }); });
             on('arrival-send-email', 'click', () => { sendArrivalEmail(); });
             function toggleOrdersFullscreen(){
@@ -5446,7 +5537,7 @@
                 } else {
                     cont.setAttribute('data-full','0');
                     cont.style.position=''; cont.style.top=''; cont.style.left=''; cont.style.right=''; cont.style.bottom=''; cont.style.zIndex=''; cont.style.background=''; cont.style.padding='';
-                    resp.style.maxHeight='360px';
+                    resp.style.maxHeight='800px';
                     btn.textContent='Tela Cheia';
                     const exit = document.getElementById('orders-exit-full'); if (exit) try { exit.remove(); } catch {}
                 }
